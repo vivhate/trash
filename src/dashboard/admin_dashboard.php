@@ -77,6 +77,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $category_id = $_POST['category_id'];
         $query = "DELETE FROM categories WHERE id = '$category_id'";
         $conn->query($query);
+    } elseif (isset($_POST['add_news'])) {
+        $news_title = $_POST['news_title'];
+        $news_content = $_POST['news_content'];
+        $query = "INSERT INTO news (title, content) VALUES ('$news_title', '$news_content')";
+        $conn->query($query);
+    } elseif (isset($_POST['edit_news'])) {
+        $news_id = $_POST['news_id'];
+        $news_title = $_POST['news_title'];
+        $news_content = $_POST['news_content'];
+        $query = "UPDATE news SET title = '$news_title', content = '$news_content' WHERE id = '$news_id'";
+        $conn->query($query);
+    } elseif (isset($_POST['delete_news'])) {
+        $news_id = $_POST['news_id'];
+        $query = "DELETE FROM news WHERE id = '$news_id'";
+        $conn->query($query);
     }
 }
 
@@ -85,12 +100,14 @@ $categories_query = "SELECT * FROM categories";
 $products_query = "SELECT * FROM products";
 $discounts_query = "SELECT * FROM discounts";
 $users_query = "SELECT * FROM users";
+$news_query = "SELECT * FROM news";
 
 $categories_result = $conn->query($categories_query);
 $categories_result2 = $conn->query($categories_query);
 $products_result = $conn->query($products_query);
 $discounts_result = $conn->query($discounts_query);
 $users_result = $conn->query($users_query);
+$news_result = $conn->query($news_query);
 
 // Close connection
 $conn->close();
@@ -205,6 +222,29 @@ $conn->close();
             <?php
             while ($discount = $discounts_result->fetch_assoc()) {
                 echo "<li>" . $discount['type'] . " - " . $discount['amount'] . " <form method='post'><input type='hidden' name='discount_id' value='" . $discount['id'] . "'><button type='submit' name='delete_discount'>Удалить</button></form></li>";
+            }
+            ?>
+        </ul>
+    </section>
+
+    <!-- News Section -->
+    <section id="news">
+        <h2>Новости</h2>
+        <form method="post">
+            <label>
+                <span>Заголовок</span>
+                <input type="text" name="news_title" />
+            </label>
+            <label>
+                <span>Контент</span>
+                <textarea name="news_content"></textarea>
+            </label>
+            <button type="submit" name="add_news">Добавить новость</button>
+        </form>
+        <ul id="news-list">
+            <?php
+            while ($news = $news_result->fetch_assoc()) {
+                echo "<li>" . $news['title'] . " <form method='post'><input type='hidden' name='news_id' value='" . $news['id'] . "'><button type='submit' name='delete_news'>Удалить</button></form></li>";
             }
             ?>
         </ul>
