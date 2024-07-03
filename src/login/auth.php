@@ -17,11 +17,11 @@ if (!empty($_POST)) {
 
         // Redirect to the dashboard based on the user's role
         if ($user_data['role'] === 'client') {
-            header('Location: /dashboard/admin_dashboard.php');
+            header('Location: /dashboard/');
         } elseif ($user_data['role'] === 'employee') {
-            header('Location: /dashboard/admin_dashboard.php');
+            header('Location: /dashboard/');
         } elseif ($user_data['role'] === 'admin') {
-            header('Location: /dashboard/admin_dashboard.php');
+            header('Location: /dashboard/');
         }
     } else {
         echo '<p class="text-red-600">Invalid username or password.</p>';

@@ -1,12 +1,12 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /login/login.php');
+    header('Location: /login/');
     exit;
 }
 if (isset($_GET['logout'])) {
     session_destroy();
-    header('Location: /login/login.php'); // Redirect to login page
+    header('Location: /login/'); // Redirect to login page
     exit();
 }
 require_once '../db.php';
@@ -123,7 +123,7 @@ $conn->close();
 </head>
 
 <body class="bg-gray-100 h-screen">
-    <?php include '../header.php'; ?>
+    <?php include '../components/header.php'; ?>
 
     <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12">
         <h1 class="text-3xl font-bold mb-4">Админ-панель</h1>
@@ -290,6 +290,7 @@ $conn->close();
         ?>
         <a href="?logout" class="text-blue-600 hover:text-blue-800">Выход</a>
     </div>
+    <?php include '../components/footer.php'; ?>
 </body>
 
 </html>

@@ -37,7 +37,7 @@ $users_result = $conn->query($users_query);
 
 <body class="bg-gray-100 h-screen">
     <!-- Header -->
-    <?php include 'header.php'; ?>
+    <?php include './components/header.php'; ?>
 
     <!-- Main Content -->
     <main class="container mx-auto p-4 pt-6">
@@ -120,9 +120,7 @@ $users_result = $conn->query($users_query);
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-200 py-4">
-        <p class="text-center text-gray-600">© 2024 Company Name</p>
-    </footer>
+    <?php include './components/footer.php'; ?>
 </body>
 
 </html>

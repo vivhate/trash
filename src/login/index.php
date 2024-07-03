@@ -2,7 +2,7 @@
 session_start();
 
 if ((isset($_SESSION['role']))) {
-    header('Location: /dashboard/admin_dashboard.php');
+    header('Location: /dashboard/');
     exit;
 }
 ?>
@@ -20,7 +20,7 @@ if ((isset($_SESSION['role']))) {
 </head>
 
 <body class="h-screen bg-gray-100">
-    <?php include '../header.php'; ?>
+    <?php include '../components/header.php'; ?>
     <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12">
         <h1 class="text-3xl font-bold mb-4">Login</h1>
         <form action="/login/auth.php" method="post">
@@ -35,6 +35,7 @@ if ((isset($_SESSION['role']))) {
             <button type="submit" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Login</button>
         </form>
     </div>
+    <?php include '../components/footer.php'; ?>
 </body>
 
 </html>
