@@ -119,199 +119,177 @@ $conn->close();
 
 <head>
     <title>Админ-панель</title>
-    <style>
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-        }
-
-        button[type="submit"] {
-            background-color: #4CAF50;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #3e8e41;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 </head>
 
-<body>
-    <h1>Админ-панель</h1>
+<body class="bg-gray-100 h-screen">
+    <?php include '../header.php'; ?>
 
-    <!-- Categories Section -->
-    <section id="categories">
-        <h2>Категории</h2>
-        <form method="post">
-            <label>
-                <span>Category Name</span>
-                <input type="text" name="category_name" />
-            </label>
-            <button type="submit" name="add_category">Добавить категорию</button>
-        </form>
-        <ul id="categories-list">
-            <?php
-            while ($category = $categories_result->fetch_assoc()) {
-                echo "<li>" . $category['name'] . " <form method='post'><input type='hidden' name='category_id' value='" . $category['id'] . "'><button type='submit' name='delete_category'>Удалить</button></form></li>";
-            }
-            ?>
-        </ul>
-    </section>
+    <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12">
+        <h1 class="text-3xl font-bold mb-4">Админ-панель</h1>
 
-    <!-- Catalog Section -->
-    <section id="catalog">
-        <h2>Каталог</h2>
-        <form method="post">
-            <label>
-                <span>Категория</span>
-                <select name="category">
-                    <option value="">Выбрать категорию</option>
-                    <?php
-                    while ($category = $categories_result2->fetch_assoc()) {
-                        echo "<option value='" . $category['id'] . "'>" . $category['name'] . "</option>";
-                    }
-                    ?>
-                </select>
-            </label>
-            <label>
-                <span>Продукт</span>
-                <input type="text" name="product" />
-            </label>
-            <button type="submit" name="add_product">Сохранить</button>
-        </form>
-        <ul id="catalog-list">
-            <?php
-            while ($product = $products_result->fetch_assoc()) {
-                echo "<li>" . $product['name'] . " <form method='post'><input type='hidden' name='product_id' value='" . $product['id'] . "'><button type='submit' name='delete_product'>Удалить</button></form></li>";
-            }
-            ?>
-        </ul>
-    </section>
-
-    <!-- Discounts Section -->
-    <section id="discounts">
-        <h2>Скидки</h2>
-        <form method="post">
-            <label>
-                <span>Тип скидки</span>
-                <select name="discount_type">
-                    <option value="">Выберите тип скидки</option>
-                    <option value="client">Клиент</option>
-                    <option value="users">Сотрудник</option>
-                </select>
-            </label>
-            <label>
-                <span>Скидка</span>
-                <input type="number" name="discount_amount" />
-            </label>
-            <button type="submit" name="add_discount">Добавить скидку</button>
-        </form>
-        <ul id="discounts-list">
-            <?php
-            while ($discount = $discounts_result->fetch_assoc()) {
-                echo "<li>" . $discount['type'] . " - " . $discount['amount'] . " <form method='post'><input type='hidden' name='discount_id' value='" . $discount['id'] . "'><button type='submit' name='delete_discount'>Удалить</button></form></li>";
-            }
-            ?>
-        </ul>
-    </section>
-
-    <!-- News Section -->
-    <section id="news">
-        <h2>Новости</h2>
-        <form method="post">
-            <label>
-                <span>Заголовок</span>
-                <input type="text" name="news_title" />
-            </label>
-            <label>
-                <span>Контент</span>
-                <textarea name="news_content"></textarea>
-            </label>
-            <button type="submit" name="add_news">Добавить новость</button>
-        </form>
-        <ul id="news-list">
-            <?php
-            while ($news = $news_result->fetch_assoc()) {
-                echo "<li>" . $news['title'] . " <form method='post'><input type='hidden' name='news_id' value='" . $news['id'] . "'><button type='submit' name='delete_news'>Удалить</button></form></li>";
-            }
-            ?>
-        </ul>
-    </section>
-
-    <!-- Staff Section -->
-    <?php
-    if ($_SESSION['role'] == 'admin') {
-        // Display the staff section
-    ?>
-        <!-- Staff Section -->
-        <section id="users">
-            <h2>Пользователи</h2>
+        <!-- Categories Section -->
+        <section id="categories" class="mb-4">
+            <h2 class="text-2xl">Категории</h2>
             <form method="post">
-                <label>
-                    <span>Имя</span>
-                    <input type="text" name="users_name" />
+                <label class="block mb-2">
+                    <span class="mr-2">Category Name</span>
+                    <input type="text" name="category_name" class="w-full p-2 border border-gray-300 rounded" />
                 </label>
-                <label>
-                    <span>Почта</span>
-                    <input type="email" name="users_email" />
-                </label>
-                <label>
-                    <span>Роль</span>
-                    <select name="users_role">
-                        <option value="">Выберите роль</option>
-                        <option value="admin">Admin</option>
-                        <option value="moderator">Moderator</option>
-                        <option value="client">Client</option>
-                    </select>
-                </label>
-                <label>
-                    <span>Логин</span>
-                    <input type="text" name="users_login" />
-                </label>
-                <label>
-                    <span>Пароль</span>
-                    <input type="password" name="users_password" />
-                </label>
-                <button type="submit" name="add_users">Добавить пользователя</button>
+                <button type="submit" name="add_category" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Добавить категорию</button>
             </form>
-            <ul id="users-list">
+            <ul id="categories-list">
                 <?php
-                while ($users = $users_result->fetch_assoc()) {
-                    echo "<li>" . $users['name'] . " - " . $users['email'] . " - " . $users['role'] . " 
-            <form method='post'>
-                <input type='hidden' name='users_id' value='" . $users['id'] . "'>
-                <select name='users_role'>
-                    <option value='admin' " . ($users['role'] == 'admin' ? 'selected' : '') . ">Admin</option>
-                    <option value='moderator' " . ($users['role'] == 'moderator' ? 'selected' : '') . ">Moderator</option>
-                    <option value='client' " . ($users['role'] == 'client' ? 'selected' : '') . ">Client</option>
-                </select>
-                <button type='submit' name='edit_users'>Редактировать</button>
-                <button type='submit' name='delete_users'>Удалить</button>
-            </form>
-            </li>";
+                while ($category = $categories_result->fetch_assoc()) {
+                    echo "<li class='mb-2 text-base'>" . $category['name'] . " <form method='post'><input type='hidden' name='category_id' value='" . $category['id'] . "'><button type='submit' name='delete_category' class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>Удалить</button></form></li>";
                 }
                 ?>
             </ul>
         </section>
-    <?php
-    } else {
-        // Display a message or redirect to another page if the user is not an admin
-        echo "You do not have permission to access this page.";
-    }
-    ?>
-    <a href="?logout">Выход</a>
+
+        <!-- Catalog Section -->
+        <section id="catalog" class="mb-4">
+            <h2 class="text-2xl">Каталог</h2>
+            <form method="post">
+                <label class="block mb-2">
+                    <span class="mr-2">Категория</span>
+                    <select name="category" class="w-full p-2 border border-gray-300 rounded">
+                        <option value="">Выбрать категорию</option>
+                        <?php
+                        while ($category = $categories_result2->fetch_assoc()) {
+                            echo "<option value='" . $category['id'] . "'>" . $category['name'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </label>
+                <label class="block mb-2">
+                    <span class="mr-2">Продукт</span>
+                    <input type="text" name="product" class="w-full p-2 border border-gray-300 rounded" />
+                </label>
+                <button type="submit" name="add_product" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Сохранить</button>
+            </form>
+            <ul id="catalog-list">
+                <?php
+                while ($product = $products_result->fetch_assoc()) {
+                    echo "<li class='mb-2'>" . $product['name'] . " <form method='post'><input type='hidden' name='product_id' value='" . $product['id'] . "'><button type='submit' name='delete_product' class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>Удалить</button></form></li>";
+                }
+                ?>
+            </ul>
+        </section>
+
+        <!-- Discounts Section -->
+        <section id="discounts" class="mb-4">
+            <h2 class="text-2xl">Скидки</h2>
+            <form method="post">
+                <label class="block mb-2">
+                    <span class="mr-2">Тип скидки</span>
+                    <select name="discount_type" class="w-full p-2 border border-gray-300 rounded">
+                        <option value="">Выберите тип скидки</option>
+                        <option value="client">Клиент</option>
+                        <option value="users">Сотрудник</option>
+                    </select>
+                </label>
+                <label class="block mb-2">
+                    <span class="mr-2">Скидка</span>
+                    <input type="number" name="discount_amount" class="w-full p-2 border border-gray-300 rounded" />
+                </label>
+                <button type="submit" name="add_discount" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Добавить скидку</button>
+            </form>
+            <ul id="discounts-list">
+                <?php
+                while ($discount = $discounts_result->fetch_assoc()) {
+                    echo "<li class='mb-2'>" . $discount['type'] . " - " . $discount['amount'] . " <form method='post'><input type='hidden' name='discount_id' value='" . $discount['id'] . "'><button type='submit' name='delete_discount' class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>Удалить</button></form></li>";
+                }
+                ?>
+            </ul>
+        </section>
+
+        <!-- News Section -->
+        <section id="news" class="mb-4">
+            <h2 class="text-2xl">Новости</h2>
+            <form method="post">
+                <label class="block mb-2">
+                    <span class="mr-2">Заголовок</span>
+                    <input type="text" name="news_title" class="w-full p-2 border border-gray-300 rounded" />
+                </label>
+                <label class="block mb-2">
+                    <span class="mr-2">Контент</span>
+                    <textarea name="news_content" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                </label>
+                <button type="submit" name="add_news" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Добавить новость</button>
+            </form>
+            <ul id="news-list">
+                <?php
+                while ($news = $news_result->fetch_assoc()) {
+                    echo "<li class='mb-2'>" . $news['title'] . " <form method='post'><input type='hidden' name='news_id' value='" . $news['id'] . "'><button type='submit' name='delete_news' class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>Удалить</button></form></li>";
+                }
+                ?>
+            </ul>
+        </section>
+
+        <!-- Staff Section -->
+        <?php
+        if ($_SESSION['role'] == 'admin') {
+            // Display the staff section
+        ?>
+            <!-- Staff Section -->
+            <section id="users" class="mb-4">
+                <h2 class="text-2xl">Пользователи</h2>
+                <form method="post">
+                    <label class="block mb-2">
+                        <span class="mr-2">Имя</span>
+                        <input type="text" name="users_name" class="w-full p-2 border border-gray-300 rounded" />
+                    </label>
+                    <label class="block mb-2">
+                        <span class="mr-2">Почта</span>
+                        <input type="email" name="users_email" class="w-full p-2 border border-gray-300 rounded" />
+                    </label>
+                    <label class="block mb-2">
+                        <span class="mr-2">Роль</span>
+                        <select name="users_role" class="w-full p-2 border border-gray-300 rounded">
+                            <option value="">Выберите роль</option>
+                            <option value="admin">Admin</option>
+                            <option value="moderator">Moderator</option>
+                            <option value="client">Client</option>
+                        </select>
+                    </label>
+                    <label class="block mb-2">
+                        <span class="mr-2">Логин</span>
+                        <input type="text" name="users_login" class="w-full p-2 border border-gray-300 rounded" />
+                    </label>
+                    <label class="block mb-2">
+                        <span class="mr-2">Пароль</span>
+                        <input type="password" name="users_password" class="w-full p-2 border border-gray-300 rounded" />
+                    </label>
+                    <button type="submit" name="add_users" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Добавить пользователя</button>
+                </form>
+                <ul id="users-list">
+                    <?php
+                    while ($users = $users_result->fetch_assoc()) {
+                        echo "<li class='mb-2'>" . $users['name'] . " - " . $users['email'] . " - " . $users['role'] . " 
+            <form method='post'>
+                <input type='hidden' name='users_id' value='" . $users['id'] . "'>
+                <select name='users_role' class='w-full p-2 border border-gray-300 rounded'>
+                    <option value='admin' " . ($users['role'] == 'admin' ? 'selected' : '') . ">Admin</option>
+                    <option value='moderator' " . ($users['role'] == 'moderator' ? 'selected' : '') . ">Moderator</option>
+                    <option value='client' " . ($users['role'] == 'client' ? 'selected' : '') . ">Client</option>
+                </select>
+                <button type='submit' name='edit_users' class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>Редактировать</button>
+                <button type='submit' name='delete_users' class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>Удалить</button>
+            </form>
+            </li>";
+                    }
+                    ?>
+                </ul>
+            </section>
+        <?php
+        } else {
+            // Display a message or redirect to another page if the user is not an admin
+            echo "You do not have permission to access this page.";
+        }
+        ?>
+        <a href="?logout" class="text-blue-600 hover:text-blue-800">Выход</a>
+    </div>
 </body>
 
 </html>

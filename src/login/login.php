@@ -20,7 +20,7 @@ if ((isset($_SESSION['role']))) {
 </head>
 
 <body class="h-screen bg-gray-100">
-
+    <?php include '../header.php'; ?>
     <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12">
         <h1 class="text-3xl font-bold mb-4">Login</h1>
         <form action="/login/auth.php" method="post">

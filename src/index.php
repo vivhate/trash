@@ -37,26 +37,7 @@ $users_result = $conn->query($users_query);
 
 <body class="bg-gray-100 h-screen">
     <!-- Header -->
-    <header class="bg-white shadow-md py-4">
-        <nav class="container mx-auto p-4 flex justify-between">
-            <ul class="flex items-center">
-                <li class="mr-6">
-                    <a href="#" class="text-gray-600 hover:text-gray-900">Новости</a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-gray-600 hover:text-gray-900">Личный кабинет</a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-gray-600 hover:text-gray-900">Каталог</a>
-                </li>
-            </ul>
-            <div class="flex items-center">
-                <a href="login/login.php" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
-                    Войти
-                </a>
-            </div>
-        </nav>
-    </header>
+    <?php include 'header.php'; ?>
 
     <!-- Main Content -->
     <main class="container mx-auto p-4 pt-6">
