@@ -1,4 +1,14 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /login/login.php');
+    exit;
+}
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: /login/login.php'); // Redirect to login page
+    exit();
+}
 require_once '../db.php';
 // Check connection
 if ($conn->connect_error) {
@@ -37,26 +47,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $discount_id = $_POST['discount_id'];
         $query = "DELETE FROM discounts WHERE id = '$discount_id'";
         $conn->query($query);
-    } elseif (isset($_POST['add_staff'])) {
-        $staff_name = $_POST['staff_name'];
-        $staff_email = $_POST['staff_email'];
-        $staff_role = $_POST['staff_role'];
-        $staff_login = $_POST['staff_login'];
-        $staff_password = password_hash($_POST['staff_password'], PASSWORD_DEFAULT);
-        $query = "INSERT INTO staff (name, email, role, login, password) VALUES ('$staff_name', '$staff_email', '$staff_role', '$staff_login', '$staff_password')";
+    } elseif (isset($_POST['add_users'])) {
+        $users_name = $_POST['users_name'];
+        $users_email = $_POST['users_email'];
+        $users_role = $_POST['users_role'];
+        $users_login = $_POST['users_login'];
+        $users_password = password_hash($_POST['users_password'], PASSWORD_DEFAULT);
+        $query = "INSERT INTO users (name, email, role, login, password) VALUES ('$users_name', '$users_email', '$users_role', '$users_login', '$users_password')";
         $conn->query($query);
-    } elseif (isset($_POST['edit_staff'])) {
-        $staff_id = $_POST['staff_id'];
-        $staff_name = $_POST['staff_name'];
-        $staff_email = $_POST['staff_email'];
-        $staff_role = $_POST['staff_role'];
-        $staff_login = $_POST['staff_login'];
-        $staff_password = password_hash($_POST['staff_password'], PASSWORD_DEFAULT);
-        $query = "UPDATE staff SET name = '$staff_name', email = '$staff_email', role = '$staff_role', login = '$staff_login', password = '$staff_password' WHERE id = '$staff_id'";
+    } elseif (isset($_POST['edit_users'])) {
+        $users_id = $_POST['users_id'];
+        $users_role = $_POST['users_role'];
+        $query = "UPDATE users SET role = '$users_role' WHERE id = '$users_id'";
         $conn->query($query);
-    } elseif (isset($_POST['delete_staff'])) {
-        $staff_id = $_POST['staff_id'];
-        $query = "DELETE FROM staff WHERE id = '$staff_id'";
+    } elseif (isset($_POST['delete_users'])) {
+        $users_id = $_POST['users_id'];
+        $query = "DELETE FROM users WHERE id = '$users_id'";
         $conn->query($query);
     } elseif (isset($_POST['add_category'])) {
         $category_name = $_POST['category_name'];
@@ -78,13 +84,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $categories_query = "SELECT * FROM categories";
 $products_query = "SELECT * FROM products";
 $discounts_query = "SELECT * FROM discounts";
-$staff_query = "SELECT * FROM staff";
+$users_query = "SELECT * FROM users";
 
 $categories_result = $conn->query($categories_query);
 $categories_result2 = $conn->query($categories_query);
 $products_result = $conn->query($products_query);
 $discounts_result = $conn->query($discounts_query);
-$staff_result = $conn->query($staff_query);
+$users_result = $conn->query($users_query);
 
 // Close connection
 $conn->close();
@@ -95,9 +101,8 @@ $conn->close();
 <html>
 
 <head>
-    <title>Admin Dashboard</title>
+    <title>Админ-панель</title>
     <style>
-        /* Add some basic styling to make the form look decent */
         label {
             display: block;
             margin-bottom: 10px;
@@ -127,22 +132,22 @@ $conn->close();
 </head>
 
 <body>
-    <h1>Admin Dashboard</h1>
+    <h1>Админ-панель</h1>
 
     <!-- Categories Section -->
     <section id="categories">
-        <h2>Categories</h2>
+        <h2>Категории</h2>
         <form method="post">
             <label>
                 <span>Category Name</span>
                 <input type="text" name="category_name" />
             </label>
-            <button type="submit" name="add_category">Add Category</button>
+            <button type="submit" name="add_category">Добавить категорию</button>
         </form>
         <ul id="categories-list">
             <?php
             while ($category = $categories_result->fetch_assoc()) {
-                echo "<li>" . $category['name'] . " <form method='post'><input type='hidden' name='category_id' value='" . $category['id'] . "'><button type='submit' name='edit_category'>Edit</button><button type='submit' name='delete_category'>Delete</button></form></li>";
+                echo "<li>" . $category['name'] . " <form method='post'><input type='hidden' name='category_id' value='" . $category['id'] . "'><button type='submit' name='delete_category'>Удалить</button></form></li>";
             }
             ?>
         </ul>
@@ -150,12 +155,12 @@ $conn->close();
 
     <!-- Catalog Section -->
     <section id="catalog">
-        <h2>Catalog</h2>
+        <h2>Каталог</h2>
         <form method="post">
             <label>
-                <span>Category</span>
+                <span>Категория</span>
                 <select name="category">
-                    <option value="">Select Category</option>
+                    <option value="">Выбрать категорию</option>
                     <?php
                     while ($category = $categories_result2->fetch_assoc()) {
                         echo "<option value='" . $category['id'] . "'>" . $category['name'] . "</option>";
@@ -164,15 +169,15 @@ $conn->close();
                 </select>
             </label>
             <label>
-                <span>Product</span>
+                <span>Продукт</span>
                 <input type="text" name="product" />
             </label>
-            <button type="submit" name="add_product">Add Product</button>
+            <button type="submit" name="add_product">Сохранить</button>
         </form>
         <ul id="catalog-list">
             <?php
             while ($product = $products_result->fetch_assoc()) {
-                echo "<li>" . $product['name'] . " <form method='post'><input type='hidden' name='product_id' value='" . $product['id'] . "'><button type='submit' name='edit_product'>Edit</button><button type='submit' name='delete_product'>Delete</button></form></li>";
+                echo "<li>" . $product['name'] . " <form method='post'><input type='hidden' name='product_id' value='" . $product['id'] . "'><button type='submit' name='delete_product'>Удалить</button></form></li>";
             }
             ?>
         </ul>
@@ -180,70 +185,93 @@ $conn->close();
 
     <!-- Discounts Section -->
     <section id="discounts">
-        <h2>Discounts</h2>
+        <h2>Скидки</h2>
         <form method="post">
             <label>
-                <span>Discount Type</span>
+                <span>Тип скидки</span>
                 <select name="discount_type">
-                    <option value="">Select Discount Type</option>
-                    <option value="client">Client</option>
-                    <option value="staff">Staff</option>
+                    <option value="">Выберите тип скидки</option>
+                    <option value="client">Клиент</option>
+                    <option value="users">Сотрудник</option>
                 </select>
             </label>
             <label>
-                <span>Discount Amount</span>
+                <span>Скидка</span>
                 <input type="number" name="discount_amount" />
             </label>
-            <button type="submit" name="add_discount">Add Discount</button>
+            <button type="submit" name="add_discount">Добавить скидку</button>
         </form>
         <ul id="discounts-list">
             <?php
             while ($discount = $discounts_result->fetch_assoc()) {
-                echo "<li>" . $discount['type'] . " - " . $discount['amount'] . " <form method='post'><input type='hidden' name='discount_id' value='" . $discount['id'] . "'><button type='submit' name='edit_discount'>Edit</button><button type='submit' name='delete_discount'>Delete</button></form></li>";
+                echo "<li>" . $discount['type'] . " - " . $discount['amount'] . " <form method='post'><input type='hidden' name='discount_id' value='" . $discount['id'] . "'><button type='submit' name='delete_discount'>Удалить</button></form></li>";
             }
             ?>
         </ul>
     </section>
 
     <!-- Staff Section -->
-    <section id="staff">
-        <h2>Staff</h2>
-        <form method="post">
-            <label>
-                <span>Name</span>
-                <input type="text" name="staff_name" />
-            </label>
-            <label>
-                <span>Email</span>
-                <input type="email" name="staff_email" />
-            </label>
-            <label>
-                <span>Role</span>
-                <select name="staff_role">
-                    <option value="">Select Role</option>
-                    <option value="admin">Admin</option>
-                    <option value="moderator">Moderator</option>
-                    <option value="client">Client</option>
+    <?php
+    if ($_SESSION['role'] == 'admin') {
+        // Display the staff section
+    ?>
+        <!-- Staff Section -->
+        <section id="users">
+            <h2>Пользователи</h2>
+            <form method="post">
+                <label>
+                    <span>Имя</span>
+                    <input type="text" name="users_name" />
+                </label>
+                <label>
+                    <span>Почта</span>
+                    <input type="email" name="users_email" />
+                </label>
+                <label>
+                    <span>Роль</span>
+                    <select name="users_role">
+                        <option value="">Выберите роль</option>
+                        <option value="admin">Admin</option>
+                        <option value="moderator">Moderator</option>
+                        <option value="client">Client</option>
+                    </select>
+                </label>
+                <label>
+                    <span>Логин</span>
+                    <input type="text" name="users_login" />
+                </label>
+                <label>
+                    <span>Пароль</span>
+                    <input type="password" name="users_password" />
+                </label>
+                <button type="submit" name="add_users">Добавить пользователя</button>
+            </form>
+            <ul id="users-list">
+                <?php
+                while ($users = $users_result->fetch_assoc()) {
+                    echo "<li>" . $users['name'] . " - " . $users['email'] . " - " . $users['role'] . " 
+            <form method='post'>
+                <input type='hidden' name='users_id' value='" . $users['id'] . "'>
+                <select name='users_role'>
+                    <option value='admin' " . ($users['role'] == 'admin' ? 'selected' : '') . ">Admin</option>
+                    <option value='moderator' " . ($users['role'] == 'moderator' ? 'selected' : '') . ">Moderator</option>
+                    <option value='client' " . ($users['role'] == 'client' ? 'selected' : '') . ">Client</option>
                 </select>
-            </label>
-            <label>
-                <span>Login</span>
-                <input type="text" name="staff_login" />
-            </label>
-            <label>
-                <span>Password</span>
-                <input type="password" name="staff_password" />
-            </label>
-            <button type="submit" name="add_staff">Add Staff</button>
-        </form>
-        <ul id="staff-list">
-            <?php
-            while ($staff = $staff_result->fetch_assoc()) {
-                echo "<li>" . $staff['name'] . " - " . $staff['email'] . " - " . $staff['role'] . " <form method='post'><input type='hidden' name='staff_id' value='" . $staff['id'] . "'><button type='submit' name='edit_staff'>Edit</button><button type='submit' name='delete_staff'>Delete</button></form></li>";
-            }
-            ?>
-        </ul>
-    </section>
+                <button type='submit' name='edit_users'>Редактировать</button>
+                <button type='submit' name='delete_users'>Удалить</button>
+            </form>
+            </li>";
+                }
+                ?>
+            </ul>
+        </section>
+    <?php
+    } else {
+        // Display a message or redirect to another page if the user is not an admin
+        echo "You do not have permission to access this page.";
+    }
+    ?>
+    <a href="?logout">Выход</a>
 </body>
 
 </html>

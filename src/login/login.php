@@ -1,5 +1,16 @@
+<?php
+session_start();
+
+if ((isset($_SESSION['role']))) {
+    header('Location: /dashboard/admin_dashboard.php');
+    exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
+
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +20,7 @@
 </head>
 
 <body class="h-screen bg-gray-100">
+
     <div class="container mx-auto p-4 pt-6 md:p-6 lg:p-12">
         <h1 class="text-3xl font-bold mb-4">Login</h1>
         <form action="/login/auth.php" method="post">
